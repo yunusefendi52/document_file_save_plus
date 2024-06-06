@@ -106,7 +106,7 @@ class DocumentFileSavePlusPlugin: FlutterPlugin, MethodCallHandler, ActivityAwar
         val itemUri = resolver.insert(collection, values)
 
         if (itemUri != null) {
-          resolver.openFileDescriptor(itemUri, "w").use { it ->
+          resolver.openFileDescriptor(itemUri, "rwt").use { it ->
             ParcelFileDescriptor.AutoCloseOutputStream(it).write(data)
           }
           values.clear()
