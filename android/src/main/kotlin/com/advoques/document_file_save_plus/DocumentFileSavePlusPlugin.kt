@@ -67,8 +67,12 @@ class DocumentFileSavePlusPlugin: FlutterPlugin, MethodCallHandler, ActivityAwar
         val dataList: List<ByteArray> = call.argument("dataList")!!
         val fileNameList: List<String> = call.argument("fileNameList")!!
         val mimeTypeList: List<String> = call.argument("mimeTypeList")!!
-        saveMultipleFiles(dataList, fileNameList, mimeTypeList)
-        result.success(null)
+        val saved = saveMultipleFiles(dataList, fileNameList, mimeTypeList)
+        if (saved) {
+          result.success(null)
+        } else {
+          result.error("UNAVAILABLE", "itemUri may null", null)
+        }
       } else {
         ActivityCompat.requestPermissions(currentActivity!!, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQ_CODE)
       }
@@ -82,7 +86,7 @@ class DocumentFileSavePlusPlugin: FlutterPlugin, MethodCallHandler, ActivityAwar
     channel.setMethodCallHandler(null)
   }
 
-  private fun saveMultipleFiles(dataList: List<ByteArray>, fileNameList: List<String>, mimeTypeList: List<String>) {
+  private fun saveMultipleFiles(dataList: List<ByteArray>, fileNameList: List<String>, mimeTypeList: List<String>): Boolean {
     val length = dataList.count()
 
     for (i in 0 until length) {
@@ -117,7 +121,7 @@ class DocumentFileSavePlusPlugin: FlutterPlugin, MethodCallHandler, ActivityAwar
           resolver.update(itemUri, values, null, null)
         } else {
           Log.i("advoques", "itemUri null")
-          throw Exception("itemUri plugin null")
+          return false
         }
       } else {
         Log.i("advoques", "save file using getExternalStoragePublicDirectory")
@@ -127,6 +131,8 @@ class DocumentFileSavePlusPlugin: FlutterPlugin, MethodCallHandler, ActivityAwar
         fos.close()
       }
     }
+
+    return true
   }
 
   override fun onRequestPermissionsResult(
