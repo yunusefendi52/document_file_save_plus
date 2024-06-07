@@ -115,6 +115,9 @@ class DocumentFileSavePlusPlugin: FlutterPlugin, MethodCallHandler, ActivityAwar
           values.clear()
           values.put(MediaStore.Downloads.IS_PENDING, 0)
           resolver.update(itemUri, values, null, null)
+        } else {
+          Log.i("advoques", "itemUri null")
+          throw Exception("itemUri plugin null")
         }
       } else {
         Log.i("advoques", "save file using getExternalStoragePublicDirectory")
